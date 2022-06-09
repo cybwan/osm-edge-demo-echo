@@ -19,7 +19,9 @@ K8S_INGRESS_NODE="${K8S_INGRESS_NODE:-osm-worker}"
 kubectl label node "$K8S_INGRESS_NODE" ingress-ready=true --overwrite=true
 
 helm repo add fsm https://flomesh-io.github.io/fsm
+
 helm install fsm fsm/fsm --namespace "$INGRESS_PIPY_NAMESPACE" --create-namespace
+sleep 5
 
 kubectl wait --namespace "$INGRESS_PIPY_NAMESPACE" \
   --for=condition=ready pod \
