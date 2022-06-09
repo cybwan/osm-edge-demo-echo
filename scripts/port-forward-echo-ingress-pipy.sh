@@ -12,4 +12,4 @@ PIPY_INGRESS_PORT="$(kubectl -n "$INGRESS_PIPY_NAMESPACE" get service "$PIPY_ING
 
 kubectl describe ingress -n "$ECHO_CONSUMER_NAMESPACE" pipy-echo-ingress
 
-kubectl port-forward --address 0.0.0.0 -n $INGRESS_PIPY_NAMESPACE service/$PIPY_INGRESS_SERVICE "$LOCAL_PORT":"$PIPY_INGRESS_PORT" &
+kubectl port-forward --address 0.0.0.0 -n $INGRESS_PIPY_NAMESPACE service/$PIPY_INGRESS_SERVICE "$LOCAL_PORT":"$PIPY_INGRESS_PORT"
