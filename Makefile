@@ -54,6 +54,10 @@ go-lint: embed-files-test
 go-fmt:
 	go fmt ./...
 
+.PHONY: go-mod-tidy
+go-mod-tidy:
+	go mod tidy
+
 .PHONY: kind-up
 kind-up:
 	./scripts/kind-with-registry.sh
@@ -157,4 +161,4 @@ docker-build: docker-build-demo
 .PHONY: docker-build-cross-demo docker-build-cross
 docker-build-cross-demo: DOCKER_BUILDX_PLATFORM=linux/amd64,linux/arm64
 docker-build-cross-demo: docker-build-demo
-docker-build-cross: docker-build-cross-demo
+docker-build-cross: go-mod-tidy docker-build-cross-demo
