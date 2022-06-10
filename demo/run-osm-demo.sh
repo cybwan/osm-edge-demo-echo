@@ -23,9 +23,11 @@ ECHO_GRPC_SERVER_NAMESPACE="${ECHO_GRPC_SERVER_NAMESPACE:-echo-grpc-server}"
 ECHO_HTTP_SERVER_NAMESPACE="${ECHO_HTTP_SERVER_NAMESPACE:-echo-http-server}"
 CERT_MANAGER="${CERT_MANAGER:-tresor}"
 CTR_REGISTRY="${CTR_REGISTRY:-localhost:5000}"
+CTR_TAG="${CTR_TAG:-$(git rev-parse HEAD)}"
+OSM_EDGE_REGISTRY="${OSM_EDGE_REGISTRY:-flomesh}"
+OSM_EDGE_TAG="${OSM_EDGE_TAG:-latest}"
 CTR_REGISTRY_CREDS_NAME="${CTR_REGISTRY_CREDS_NAME:-acr-creds}"
 DEPLOY_TRAFFIC_SPLIT="${DEPLOY_TRAFFIC_SPLIT:-true}"
-CTR_TAG="${CTR_TAG:-$(git rev-parse HEAD)}"
 IMAGE_PULL_POLICY="${IMAGE_PULL_POLICY:-Always}"
 ENABLE_DEBUG_SERVER="${ENABLE_DEBUG_SERVER:-true}"
 ENABLE_EGRESS="${ENABLE_EGRESS:-false}"
@@ -35,7 +37,7 @@ DEPLOY_JAEGER="${DEPLOY_JAEGER:-false}"
 TRACING_ADDRESS="${TRACING_ADDRESS:-jaeger.${K8S_NAMESPACE}.svc.cluster.local}"
 ENABLE_FLUENTBIT="${ENABLE_FLUENTBIT:-false}"
 DEPLOY_PROMETHEUS="${DEPLOY_PROMETHEUS:-false}"
-SIDECAR_LOG_LEVEL="${SIDECAR_LOG_LEVEL:-debug}"
+SIDECAR_LOG_LEVEL="${SIDECAR_LOG_LEVEL:-warn}"
 USE_PRIVATE_REGISTRY="${USE_PRIVATE_REGISTRY:-true}"
 PUBLISH_IMAGES="${PUBLISH_IMAGES:-false}"
 TIMEOUT="${TIMEOUT:-300s}"
@@ -97,9 +99,9 @@ if [ "$CERT_MANAGER" = "vault" ]; then
       --set=osm.vault.host="$VAULT_HOST" \
       --set=osm.vault.token="$VAULT_TOKEN" \
       --set=osm.vault.protocol="$VAULT_PROTOCOL" \
-      --set=osm.image.registry="$CTR_REGISTRY" \
+      --set=osm.image.registry="$OSM_EDGE_REGISTRY" \
       --set=osm.imagePullSecrets[0].name="$CTR_REGISTRY_CREDS_NAME" \
-      --set=osm.image.tag="$CTR_TAG" \
+      --set=osm.image.tag="$OSM_EDGE_TAG" \
       --set=osm.image.pullPolicy="$IMAGE_PULL_POLICY" \
       --set=osm.enableDebugServer="$ENABLE_DEBUG_SERVER" \
       --set=osm.enableEgress="$ENABLE_EGRESS" \
@@ -111,7 +113,7 @@ if [ "$CERT_MANAGER" = "vault" ]; then
       --set=osm.enableFluentbit="$ENABLE_FLUENTBIT" \
       --set=osm.deployPrometheus="$DEPLOY_PROMETHEUS" \
       --set=osm.sidecarLogLevel="$SIDECAR_LOG_LEVEL" \
-      --set=osm.controllerLogLevel="trace" \
+      --set=osm.controllerLogLevel="warn" \
       --timeout="$TIMEOUT" \
       $optionalInstallArgs
 else
@@ -121,9 +123,9 @@ else
       --verbose \
       --mesh-name "$MESH_NAME" \
       --set=osm.certificateProvider.kind="$CERT_MANAGER" \
-      --set=osm.image.registry="$CTR_REGISTRY" \
+      --set=osm.image.registry="$OSM_EDGE_REGISTRY" \
       --set=osm.imagePullSecrets[0].name="$CTR_REGISTRY_CREDS_NAME" \
-      --set=osm.image.tag="$CTR_TAG" \
+      --set=osm.image.tag="$OSM_EDGE_TAG" \
       --set=osm.image.pullPolicy="$IMAGE_PULL_POLICY" \
       --set=osm.enableDebugServer="$ENABLE_DEBUG_SERVER" \
       --set=osm.enableEgress="$ENABLE_EGRESS" \
@@ -135,12 +137,12 @@ else
       --set=osm.enableFluentbit="$ENABLE_FLUENTBIT" \
       --set=osm.deployPrometheus="$DEPLOY_PROMETHEUS" \
       --set=osm.sidecarLogLevel="$SIDECAR_LOG_LEVEL" \
-      --set=osm.controllerLogLevel="trace" \
+      --set=osm.controllerLogLevel="warn" \
       --timeout="$TIMEOUT" \
       $optionalInstallArgs
 fi
 
-./scripts/mesh-enable-permissive-traffic-mode.sh
+./scripts/meshconfig-permissive-traffic-mode.sh true
 
 ./demo/configure-app-namespaces.sh
 
