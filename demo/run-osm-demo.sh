@@ -51,9 +51,6 @@ exit_error() {
     exit 1
 }
 
-# Check if Docker daemon is running
-docker info > /dev/null || { echo "Docker daemon is not running"; exit 1; }
-
 # cleanup stale resources from previous runs
 ./demo/clean-kubernetes.sh
 
